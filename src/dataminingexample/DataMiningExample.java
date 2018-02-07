@@ -83,17 +83,18 @@ public class DataMiningExample {
 		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
 		Evaluation evaluator;
 
-	/*	
-		//NO-HONESTA (use training set)
+		
+		//NO-HONESTA (use training set) -- Supplied test set
 		evaluator = new Evaluation(data); //datos para entrenar
 		
 		Instances test = data; //datos para test
 		
 		evaluator.evaluateModel(estimador, test);
-		*/
 		
-		//HOLD-OUT (percentage split, ejemplo 66% entrenamiento, 34% evaluación)
-		double percent = 66.0; 
+		
+		//-----------------------no me da como en weka
+		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
+		double percent = 70.0; 
 		int tamanoEntrenamiento = (int) Math.round(data.numInstances() * percent / 100); 
 		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
 		
@@ -103,14 +104,17 @@ public class DataMiningExample {
 		evaluator = new Evaluation(datosEntrenamiento);
 		evaluator.evaluateModel(estimador, datosTest);
 		
-	/*	
+		
 		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
 		// Random(1):the seed = 1 means "no shuffle" :-!
 		evaluator = new Evaluation(data); //datos para entrenar
 		evaluator.crossValidateModel(estimador, data, 10, new Random(1)); 
-
-*/
+		
+		
+		//LEAVE ONE OUT (K=nº instancias)
+		evaluator = new Evaluation(data); //datos para entrenar
+		evaluator.crossValidateModel(estimador, data, data.numInstances(), new Random(1)); 
 		
 		
 		// OUTPUT
