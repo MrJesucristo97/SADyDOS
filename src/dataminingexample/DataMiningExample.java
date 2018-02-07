@@ -92,7 +92,7 @@ public class DataMiningExample {
 		J48 estimador = new J48(); 
 		
 		
-		
+	
 		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
 		Evaluation evaluator;
 		
