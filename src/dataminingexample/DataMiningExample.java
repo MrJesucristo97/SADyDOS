@@ -18,9 +18,10 @@ import weka.filters.supervised.attribute.AttributeSelection;
 public class DataMiningExample {
 
 	public static void main(String[] args) throws Exception {
+
 		/////////////////////////////////////////////////////////////
-		// ABRIR FICHERO
-		String path="C:\\Universidad\\2017-2018\\2doCuatri\\SAD-sistemas de apoyo a la decisiÃ³n\\Practicas\\codigoJava\\SADJava\\bin\\archivos\\heart-c.arff";
+		// 1. ABRIR FICHERO(s)
+		String path="C:\\Users\\Pauladj\\Documents\\GitHub\\SADyDOS\\src\\archivos\\heart-c.arff";
 		FileReader fi = null;
 		try {
 			fi = new FileReader(path);
@@ -29,26 +30,35 @@ public class DataMiningExample {
 			System.out.println("Fichero NO abierto");
 			System.out.println("ERROR: Revisar path del fichero de datos:" + args[0]);
 		}
-		// CARGAR INSTANCIAS
+
+
+
+		// 2. CARGAR INSTANCIAS
 		Instances data = null;
 		try {
 			data = new Instances(fi);
 		} catch (IOException e) {
 			System.out.println("ERROR: Revisar contenido del fichero de datos: " + args[0]);
 		}
-		// CERRAR FICHERO
+
+
+
+		// 3. CERRAR FICHERO
 		try {
 			fi.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Error al cerrar");
 		}
 
-		// Falta aplicar las ?? del fichero
-		// ASIGNAR EL ATRIBUTO CLASE
+
+
+		// 4. ASIGNAR EL ATRIBUTO CLASE
 		data.setClassIndex(data.numAttributes() - 1);
 
-		/////////////////////////////////////////////////////////////
-		// CREAr LOS FILTROS POR LOS QUE DEBERAN PASAR LAS INSTANCIAS
+
+		/**
+		///////////////////////////- OPCIONAL -//////////////////////////////////
+		// 5. CREAR LOS FILTROS POR LOS QUE DEBERAN PASAR LAS INSTANCIAS
 		AttributeSelection filter = new AttributeSelection();
 		CfsSubsetEval eval = new CfsSubsetEval();
 		BestFirst search = new BestFirst();
@@ -56,42 +66,56 @@ public class DataMiningExample {
 		filter.setSearch(search);
 		filter.setInputFormat(data);
 
-		// APLICAR LOS FILTROS A LAS INSTANCIAS
-		Instances newData = Filter.useFilter(data, filter);
+		// 6. APLICAR LOS FILTROS A LAS INSTANCIAS
+		data = Filter.useFilter(data, filter);
+		///////////////////////////////////////////////////////////////
 
-		// CLASIFICAR SEGUN ALGORITMO NAIVEBAYES
-		// ENTRENAR CLASIFICADOR
-		NaiveBayes estimador = new NaiveBayes();
+		 **/
 
-		// EVALUAR CLASIFICADOR MEDIANTE 10-fold CROSS-VALIADATION CON LOS DATOS
+		// 7. ELEGIR ALGORITMO PARA CLASIFICAR
+
+		// NAIVEBAYES
+		NaiveBayes estimador = new NaiveBayes(); // entrenar clasificador
+		estimador.buildClassifier(data);   // construir clasificador
+
+		
+
+		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
+		Evaluation evaluator;
+
+	/*	
+		//NO-HONESTA (use training set)
+		evaluator = new Evaluation(data); //datos para entrenar
+		
+		Instances test = data; //datos para test
+		
+		evaluator.evaluateModel(estimador, test);
+		*/
+		
+		//HOLD-OUT (percentage split, ejemplo 66% entrenamiento, 34% evaluación)
+		double percent = 66.0; 
+		int tamanoEntrenamiento = (int) Math.round(data.numInstances() * percent / 100); 
+		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
+		
+		Instances datosEntrenamiento = new Instances(data, 0, tamanoEntrenamiento); 
+		Instances datosTest = new Instances(data, tamanoEntrenamiento, tamanoTest); 
+		
+		evaluator = new Evaluation(datosEntrenamiento);
+		evaluator.evaluateModel(estimador, datosTest);
+		
+	/*	
+		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
-		Evaluation evaluator = new Evaluation(newData);
 		// Random(1):the seed = 1 means "no shuffle" :-!
-		evaluator.crossValidateModel(estimador, newData, 10, new Random(1)); 
+		evaluator = new Evaluation(data); //datos para entrenar
+		evaluator.crossValidateModel(estimador, data, 10, new Random(1)); 
 
-		double acc = evaluator.pctCorrect();
-		double inc = evaluator.pctIncorrect();
-		double kappa = evaluator.kappa();
-		double mae = evaluator.meanAbsoluteError();
-		double rmse = evaluator.rootMeanSquaredError();
-		double rae = evaluator.relativeAbsoluteError();
-		double rrse = evaluator.rootRelativeSquaredError();
-		double confMatrix[][] = evaluator.confusionMatrix();
-
-		// EVALUAR CLASIFICADOR 30% DE LOS DATOS SELECCIONADOS ALEATORIAMENTE PARA EL TEST
-		System.out.println("Correctly Classified Instances  " + acc);
-		System.out.println("Incorrectly Classified Instances  " + inc);
-		System.out.println("Kappa statistic  " + kappa);
-		System.out.println("Mean absolute error  " + mae);
-		System.out.println("Root mean squared error  " + rmse);
-		System.out.println("Relative absolute error  " + rae);
-		System.out.println("Root relative squared error  " + rrse);
-		for (int i = 0; i < confMatrix.length; i++) {
-			for (int j = 0; j < confMatrix[0].length; j++) {
-				System.out.print(confMatrix[i][j]);
-			}
-			System.out.println();
-		}
+*/
+		
+		
+		// OUTPUT
+		System.out.print(evaluator.toSummaryString());
+		System.out.print(evaluator.toMatrixString());
 
 	}
 }
