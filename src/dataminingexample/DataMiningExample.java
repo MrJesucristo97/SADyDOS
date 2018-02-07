@@ -8,6 +8,10 @@ import weka.attributeSelection.BestFirst;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.rules.OneR;
+import weka.classifiers.rules.ZeroR;
+import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
@@ -25,9 +29,7 @@ public class DataMiningExample {
 		FileReader fi = null;
 		try {
 			fi = new FileReader(path);
-			System.out.println("Fichero abierto");
 		} catch (FileNotFoundException e) {
-			System.out.println("Fichero NO abierto");
 			System.out.println("ERROR: Revisar path del fichero de datos:" + args[0]);
 		}
 
@@ -57,66 +59,88 @@ public class DataMiningExample {
 
 
 		/**
-		///////////////////////////- OPCIONAL -//////////////////////////////////
-		// 5. CREAR LOS FILTROS POR LOS QUE DEBERAN PASAR LAS INSTANCIAS
-		AttributeSelection filter = new AttributeSelection();
-		CfsSubsetEval eval = new CfsSubsetEval();
-		BestFirst search = new BestFirst();
-		filter.setEvaluator(eval);
-		filter.setSearch(search);
-		filter.setInputFormat(data);
+        ///////////////////////////- OPCIONAL -//////////////////////////////////
+        // 5. CREAR LOS FILTROS POR LOS QUE DEBERAN PASAR LAS INSTANCIAS
+        AttributeSelection filter = new AttributeSelection();
+        CfsSubsetEval eval = new CfsSubsetEval();
+        BestFirst search = new BestFirst();
+        filter.setEvaluator(eval);
+        filter.setSearch(search);
+        filter.setInputFormat(data);
 
-		// 6. APLICAR LOS FILTROS A LAS INSTANCIAS
-		data = Filter.useFilter(data, filter);
-		///////////////////////////////////////////////////////////////
+        // 6. APLICAR LOS FILTROS A LAS INSTANCIAS
+        data = Filter.useFilter(data, filter);
+        ///////////////////////////////////////////////////////////////
 
 		 **/
 
 		// 7. ELEGIR ALGORITMO PARA CLASIFICAR
 
 		// NAIVEBAYES
-		NaiveBayes estimador = new NaiveBayes(); // entrenar clasificador
-		estimador.buildClassifier(data);   // construir clasificador
+		//NaiveBayes estimador = new NaiveBayes(); // entrenar clasificador
 
+		// ZEROR
+		//ZeroR estimador = new ZeroR();
+
+		// ONER
+		//OneR estimador = new OneR();
 		
+		// IBk
+		//IBk estimador = new IBk();
 
+		//J48
+		J48 estimador = new J48(); 
+		
+		
+		
 		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
 		Evaluation evaluator;
+		
+		
 
-		
 		//NO-HONESTA (use training set) -- Supplied test set
+		estimador.buildClassifier(data);   // construir clasificador
+
 		evaluator = new Evaluation(data); //datos para entrenar
-		
+
 		Instances test = data; //datos para test
-		
+
 		evaluator.evaluateModel(estimador, test);
+/*
 		
-		
+
 		//-----------------------no me da como en weka
 		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
 		double percent = 70.0; 
-		int tamanoEntrenamiento = (int) Math.round(data.numInstances() * percent / 100); 
-		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
 		
+		data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
+
+		int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
+		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
+
 		Instances datosEntrenamiento = new Instances(data, 0, tamanoEntrenamiento); 
 		Instances datosTest = new Instances(data, tamanoEntrenamiento, tamanoTest); 
-		
+
+		estimador.buildClassifier(datosEntrenamiento);   // construir clasificador
+
 		evaluator = new Evaluation(datosEntrenamiento);
 		evaluator.evaluateModel(estimador, datosTest);
-		
-		
+*/
+/**
 		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
 		// Random(1):the seed = 1 means "no shuffle" :-!
 		evaluator = new Evaluation(data); //datos para entrenar
 		evaluator.crossValidateModel(estimador, data, 10, new Random(1)); 
-		
-		
+
+
 		//LEAVE ONE OUT (K=nº instancias)
 		evaluator = new Evaluation(data); //datos para entrenar
 		evaluator.crossValidateModel(estimador, data, data.numInstances(), new Random(1)); 
-		
-		
+
+*/
+
+
 		// OUTPUT
 		System.out.print(evaluator.toSummaryString());
 		System.out.print(evaluator.toMatrixString());
