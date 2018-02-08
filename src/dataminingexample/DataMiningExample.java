@@ -34,7 +34,6 @@ public class DataMiningExample {
 		}
 
 
-
 		// 2. CARGAR INSTANCIAS
 		Instances data = null;
 		try {
@@ -109,7 +108,6 @@ public class DataMiningExample {
 
 	/*	
 
-		//-----------------------no me da como en weka
 		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
 		double percent = 70.0; 
 		
