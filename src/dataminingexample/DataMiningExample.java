@@ -22,10 +22,10 @@ import weka.filters.supervised.attribute.AttributeSelection;
 public class DataMiningExample {
 
 	public static void main(String[] args) throws Exception {
-
+		
 		/////////////////////////////////////////////////////////////
 		// 1. ABRIR FICHERO(s)
-		String path="C:\\Users\\Pauladj\\Documents\\GitHub\\SADyDOS\\src\\archivos\\heart-c.arff";
+		String path = args[0];
 		FileReader fi = null;
 		try {
 			fi = new FileReader(path);
@@ -106,8 +106,8 @@ public class DataMiningExample {
 		Instances test = data; //datos para test
 
 		evaluator.evaluateModel(estimador, test);
-/*
-		
+
+	/*	
 
 		//-----------------------no me da como en weka
 		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
@@ -125,8 +125,9 @@ public class DataMiningExample {
 
 		evaluator = new Evaluation(datosEntrenamiento);
 		evaluator.evaluateModel(estimador, datosTest);
-*/
-/**
+
+
+		
 		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
 		// Random(1):the seed = 1 means "no shuffle" :-!
@@ -134,12 +135,12 @@ public class DataMiningExample {
 		evaluator.crossValidateModel(estimador, data, 10, new Random(1)); 
 
 
+		
 		//LEAVE ONE OUT (K=nº instancias)
 		evaluator = new Evaluation(data); //datos para entrenar
 		evaluator.crossValidateModel(estimador, data, data.numInstances(), new Random(1)); 
 
 */
-
 
 		// OUTPUT
 		System.out.print(evaluator.toSummaryString());
