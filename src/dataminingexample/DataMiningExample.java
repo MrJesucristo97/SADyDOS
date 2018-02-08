@@ -76,19 +76,19 @@ public class DataMiningExample {
 		// 7. ELEGIR ALGORITMO PARA CLASIFICAR
 
 		// NAIVEBAYES
-		//NaiveBayes estimador = new NaiveBayes(); // entrenar clasificador
+		//NaiveBayes clasificador = new NaiveBayes(); // entrenar clasificador
 
 		// ZEROR
-		//ZeroR estimador = new ZeroR();
+		//ZeroR clasificador = new ZeroR();
 
 		// ONER
-		//OneR estimador = new OneR();
+		//OneR clasificador = new OneR();
 		
 		// IBk
-		//IBk estimador = new IBk();
+		//IBk clasificador = new IBk();
 
 		//J48
-		J48 estimador = new J48(); 
+		J48 clasificador = new J48(); 
 		
 		
 	
@@ -98,13 +98,13 @@ public class DataMiningExample {
 		
 
 		//NO-HONESTA (use training set) -- Supplied test set
-		estimador.buildClassifier(data);   // construir clasificador
+		clasificador.buildClassifier(data);   // construir clasificador
 
 		evaluator = new Evaluation(data); //datos para entrenar
 
 		Instances test = data; //datos para test
 
-		evaluator.evaluateModel(estimador, test);
+		evaluator.evaluateModel(clasificador, test);
 
 	/*	
 
@@ -122,7 +122,7 @@ public class DataMiningExample {
 		estimador.buildClassifier(datosEntrenamiento);   // construir clasificador
 
 		evaluator = new Evaluation(datosEntrenamiento);
-		evaluator.evaluateModel(estimador, datosTest);
+		evaluator.evaluateModel(clasificador, datosTest);
 
 
 		
@@ -130,13 +130,13 @@ public class DataMiningExample {
 		// BARAJADOS
 		// Random(1):the seed = 1 means "no shuffle" :-!
 		evaluator = new Evaluation(data); //datos para entrenar
-		evaluator.crossValidateModel(estimador, data, 10, new Random(1)); 
+		evaluator.crossValidateModel(clasificador, data, 10, new Random(1)); 
 
 
 		
 		//LEAVE ONE OUT (K=nº instancias)
 		evaluator = new Evaluation(data); //datos para entrenar
-		evaluator.crossValidateModel(estimador, data, data.numInstances(), new Random(1)); 
+		evaluator.crossValidateModel(clasificador, data, data.numInstances(), new Random(1)); 
 
 */
 
