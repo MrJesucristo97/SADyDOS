@@ -72,7 +72,7 @@ public class DataMiningExample {
         data = Filter.useFilter(data, filter);
         ///////////////////////////////////////////////////////////////
 
-		 **/
+		
 
 		//Filtro remove percentage (Para hold out)
 		RemovePercentage filter = new RemovePercentage();
@@ -81,7 +81,11 @@ public class DataMiningExample {
 		Instances dataEntrenamiento = Filter.useFilter(data, filter);
 		filter.setInvertSelection(true);
 		filter.setPercentage(30.0);
-		Instances dataTest = Filter.useFilter(data, filter);
+		Instances dataTest = Filter.useFilter(data, filter); **/
+		
+		
+		
+		
 
 		// 7. ELEGIR ALGORITMO PARA CLASIFICAR
 
@@ -108,7 +112,7 @@ public class DataMiningExample {
 		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
 		Evaluation evaluator;
 		
-		/*	
+			
 
 		//NO-HONESTA (use training set) -- Supplied test set
 		clasificador.buildClassifier(data);   // construir clasificador
@@ -130,13 +134,13 @@ public class DataMiningExample {
 
 		Instances datosEntrenamiento = new Instances(data, 0, tamanoEntrenamiento); 
 		Instances datosTest = new Instances(data, tamanoEntrenamiento, tamanoTest); 
-*/
+
 		clasificador.buildClassifier(dataEntrenamiento);   // construir clasificador
 
 		evaluator = new Evaluation(dataEntrenamiento);
 		evaluator.evaluateModel(clasificador, dataTest);
 
-/*
+
 		
 		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
@@ -150,7 +154,7 @@ public class DataMiningExample {
 		evaluator = new Evaluation(data); //datos para entrenar
 		evaluator.crossValidateModel(clasificador, data, data.numInstances(), new Random(1)); 
 
-*/
+
 
 		// OUTPUT
 		System.out.print(evaluator.toSummaryString());
