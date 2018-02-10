@@ -73,9 +73,8 @@ public class DataMiningExample {
         ///////////////////////////////////////////////////////////////
 
 		 **/
-		data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
 
-		
+		//Filtro remove percentage (Para hold out)
 		RemovePercentage filter = new RemovePercentage();
 		filter.setPercentage(70.0);
 		filter.setInputFormat(data);
@@ -100,6 +99,9 @@ public class DataMiningExample {
 
 		//J48
 		J48 clasificador = new J48(); 
+		String[] options = new String[1];
+		options[0] = "-U"; //unpruned tree
+		clasificador.setOptions(options);
 		
 		
 	
@@ -117,14 +119,13 @@ public class DataMiningExample {
 
 		evaluator.evaluateModel(clasificador, test);
 
-	*/
 
 		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
 		double percent = 70.0; 
 		
-	//	data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
+		data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
 
-	/*	int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
+	    int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
 		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
 
 		Instances datosEntrenamiento = new Instances(data, 0, tamanoEntrenamiento); 
