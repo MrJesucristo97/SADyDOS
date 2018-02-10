@@ -15,6 +15,7 @@ import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
+import weka.filters.unsupervised.instance.RemovePercentage;
 
 ///////////////////////////////////////////////////////
 // Observa: http://weka.wikispaces.com/Use+Weka+in+your+Java+code
@@ -72,6 +73,16 @@ public class DataMiningExample {
         ///////////////////////////////////////////////////////////////
 
 		 **/
+		data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
+
+		
+		RemovePercentage filter = new RemovePercentage();
+		filter.setPercentage(70.0);
+		filter.setInputFormat(data);
+		Instances dataEntrenamiento = Filter.useFilter(data, filter);
+		filter.setInvertSelection(true);
+		filter.setPercentage(30.0);
+		Instances dataTest = Filter.useFilter(data, filter);
 
 		// 7. ELEGIR ALGORITMO PARA CLASIFICAR
 
@@ -95,7 +106,7 @@ public class DataMiningExample {
 		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
 		Evaluation evaluator;
 		
-		
+		/*	
 
 		//NO-HONESTA (use training set) -- Supplied test set
 		clasificador.buildClassifier(data);   // construir clasificador
@@ -106,25 +117,25 @@ public class DataMiningExample {
 
 		evaluator.evaluateModel(clasificador, test);
 
-	/*	
+	*/
 
 		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
 		double percent = 70.0; 
 		
-		data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
+	//	data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
 
-		int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
+	/*	int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
 		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
 
 		Instances datosEntrenamiento = new Instances(data, 0, tamanoEntrenamiento); 
 		Instances datosTest = new Instances(data, tamanoEntrenamiento, tamanoTest); 
+*/
+		clasificador.buildClassifier(dataEntrenamiento);   // construir clasificador
 
-		estimador.buildClassifier(datosEntrenamiento);   // construir clasificador
+		evaluator = new Evaluation(dataEntrenamiento);
+		evaluator.evaluateModel(clasificador, dataTest);
 
-		evaluator = new Evaluation(datosEntrenamiento);
-		evaluator.evaluateModel(clasificador, datosTest);
-
-
+/*
 		
 		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
