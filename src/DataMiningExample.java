@@ -1,4 +1,5 @@
 
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,47 +28,13 @@ public class DataMiningExample {
 		/////////////////////////////////////////////////////////////
 		// 1. ABRIR FICHERO(s)
 		String path = args[0];
-		FileReader fi = null;
-		try {
-			fi = new FileReader(path);
-		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: Revisar path del fichero de datos:" + args[0]);
-		}
-
-
-		// 2. CARGAR INSTANCIAS
-		Instances data = null;
-		try {
-			data = new Instances(fi);
-		} catch (IOException e) {
-			System.out.println("ERROR: Revisar contenido del fichero de datos: " + args[0]);
-		}
-
-
-		//////OPCIONAL
-
 		DataSource source = new DataSource(path);
 		Instances data = source.getDataSet();
 		if (data.classIndex() == -1) {
 			data.setClassIndex(data.numAttributes() - 1);
 		}
-		/////
-
+	
 		
-
-		// 3. CERRAR FICHERO
-		try {
-			fi.close();
-		} catch (IOException e) {
-			System.out.println("Error al cerrar");
-		}
-
-
-
-		// 4. ASIGNAR EL ATRIBUTO CLASE
-		data.setClassIndex(data.numAttributes() - 1);
-
-
 		/**
         ///////////////////////////- OPCIONAL -//////////////////////////////////
         // 5. CREAR LOS FILTROS POR LOS QUE DEBERAN PASAR LAS INSTANCIAS
