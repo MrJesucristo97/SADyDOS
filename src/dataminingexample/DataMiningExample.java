@@ -1,5 +1,4 @@
-package dataminingexample;
-    
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import weka.classifiers.rules.OneR;
 import weka.classifiers.rules.ZeroR;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.unsupervised.instance.RemovePercentage;
@@ -23,7 +23,7 @@ import weka.filters.unsupervised.instance.RemovePercentage;
 public class DataMiningExample {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		/////////////////////////////////////////////////////////////
 		// 1. ABRIR FICHERO(s)
 		String path = args[0];
@@ -44,6 +44,16 @@ public class DataMiningExample {
 		}
 
 
+		//////OPCIONAL
+
+		DataSource source = new DataSource(path);
+		Instances data = source.getDataSet();
+		if (data.classIndex() == -1) {
+			data.setClassIndex(data.numAttributes() - 1);
+		}
+		/////
+
+		
 
 		// 3. CERRAR FICHERO
 		try {
@@ -72,7 +82,7 @@ public class DataMiningExample {
         data = Filter.useFilter(data, filter);
         ///////////////////////////////////////////////////////////////
 
-		
+
 
 		//Filtro remove percentage (Para hold out)
 		RemovePercentage filter = new RemovePercentage();
@@ -82,10 +92,10 @@ public class DataMiningExample {
 		filter.setInvertSelection(true);
 		filter.setPercentage(30.0);
 		Instances dataTest = Filter.useFilter(data, filter); **/
-		
-		
-		
-		
+
+
+
+
 
 		// 7. ELEGIR ALGORITMO PARA CLASIFICAR
 
@@ -97,7 +107,7 @@ public class DataMiningExample {
 
 		// ONER
 		//OneR clasificador = new OneR();
-		
+
 		// IBk
 		//IBk clasificador = new IBk();
 
@@ -106,13 +116,13 @@ public class DataMiningExample {
 		String[] options = new String[1];
 		options[0] = "-U"; //unpruned tree
 		clasificador.setOptions(options);
-		
-		
-	
+
+
+
 		// 8. ELEGIR ESQUEMA DE EVALUACIÓN (Test options)
 		Evaluation evaluator;
-		
-			
+
+
 
 		//NO-HONESTA (use training set) -- Supplied test set
 		clasificador.buildClassifier(data);   // construir clasificador
@@ -126,22 +136,22 @@ public class DataMiningExample {
 
 		//HOLD-OUT (percentage split, ejemplo 70% entrenamiento, 30% evaluación)
 		double percent = 70.0; 
-		
+
 		data.randomize(new java.util.Random(1)); //aleatoriedad de selección de datos
 
-	    int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
+		int tamanoEntrenamiento = (int) Math.round(data.numInstances() * (percent / 100)); 
 		int tamanoTest = data.numInstances() - tamanoEntrenamiento; 
 
 		Instances datosEntrenamiento = new Instances(data, 0, tamanoEntrenamiento); 
 		Instances datosTest = new Instances(data, tamanoEntrenamiento, tamanoTest); 
 
-		clasificador.buildClassifier(dataEntrenamiento);   // construir clasificador
+		clasificador.buildClassifier(datosEntrenamiento);   // construir clasificador
 
-		evaluator = new Evaluation(dataEntrenamiento);
-		evaluator.evaluateModel(clasificador, dataTest);
+		evaluator = new Evaluation(datosEntrenamiento);
+		evaluator.evaluateModel(clasificador, datosTest);
 
 
-		
+
 		// 10-fold CROSS-VALIDATION CON LOS DATOS
 		// BARAJADOS
 		// Random(1):the seed = 1 means "no shuffle" :-!
@@ -149,7 +159,7 @@ public class DataMiningExample {
 		evaluator.crossValidateModel(clasificador, data, 10, new Random(1)); 
 
 
-		
+
 		//LEAVE ONE OUT (K=nº instancias)
 		evaluator = new Evaluation(data); //datos para entrenar
 		evaluator.crossValidateModel(clasificador, data, data.numInstances(), new Random(1)); 
